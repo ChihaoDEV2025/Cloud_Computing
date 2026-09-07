@@ -1,0 +1,18 @@
+{
+  "name": "my-js-app",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest --coverage",
+    "lint": "eslint src/**/*.js",
+    "build": "webpack --mode production",
+    "deploy:dev": "node src/deploy-scripts/dev-deploy.js",
+    "deploy:staging": "node src/deploy-scripts/staging-deploy.js",
+    "deploy:prod": "node src/deploy-scripts/prod-deploy.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^7.2.3"
+  }
+}

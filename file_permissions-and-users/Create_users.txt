@@ -1,0 +1,15 @@
+    # Create a dedicated group for the web application
+sudo groupadd webapp
+
+# Create a system user 'deploy' with no login shell, added to the group
+# -m creates a home dir, -s sets shell, -g sets primary group
+sudo useradd -m -s /bin/bash -g webapp deploy
+
+# Set a password (or skip and use SSH keys only)
+sudo passwd deploy
+
+# Add the deploy user to the sudo group if it needs admin tasks (optional)
+sudo usermod -aG sudo deploy
+
+# Verify
+id deploy

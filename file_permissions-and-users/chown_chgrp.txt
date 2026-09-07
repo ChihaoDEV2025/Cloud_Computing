@@ -1,0 +1,12 @@
+bashCopy
+# Change the owner of a file to the deploy user
+sudo chown deploy server.js
+
+# Change both owner and group at once (owner:group)
+sudo chown deploy:webapp server.js
+
+# Change only the group
+sudo chgrp webapp server.js
+
+# Recursively hand an entire app directory to the deploy user
+sudo chown -R deploy:webapp /var/www/myapp

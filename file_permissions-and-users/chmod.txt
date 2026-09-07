@@ -1,0 +1,8 @@
+# Give owner read/write, everyone else read-only
+chmod 644 server.js
+
+# Lock down the .env secret file: only owner can read/write
+chmod 600 .env
+
+# Make the deploy script executable for owner, runnable by others
+chmod 755 deploy.sh

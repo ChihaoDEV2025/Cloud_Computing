@@ -1,0 +1,20 @@
+# Assume app is deployed at /var/www/myapp and runs as user 'deploy'
+cd /var/www/myapp
+
+# 1) Give the whole app to the runtime user and group
+sudo chown -R deploy:webapp /var/www/myapp
+
+# 2) Directories: 755 so the app can traverse and read them
+sudo find /var/www/myapp -type d -exec chmod 755 {} \;
+
+# 3) Regular files: 644 (readable, not writable by group/others)
+sudo find /var/www/myapp -type f -exec chmod 644 {} \;
+
+# 4) Lock down the secrets: only the owner may read .env
+sudo chmod 600 /var/www/myapp/.env
+
+# 5) Make the log directory writable by the app user
+sudo chmod 755 /var/www/myapp/logs
+
+# 6) Restore execute bit on scripts that need it
+sudo chmod 755 /var/www/myapp/deploy.sh

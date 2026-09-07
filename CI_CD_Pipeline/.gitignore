@@ -1,0 +1,7 @@
+node_modules/
+dist/
+
+# bạn chạy các bài kiểm thử -> hệ thống trả về báo cáo và dữ liệu do lường về
+#độ phủ mã nguồn (code coverage) 
+#và lưu ở coverage
+coverage/
