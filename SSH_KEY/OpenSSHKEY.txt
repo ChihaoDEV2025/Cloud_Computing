@@ -1,0 +1,5 @@
+# Tạo SSH key mới với thuật toán RSA 4096-bit
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# Hoặc sử dụng thuật toán Ed25519 (hiện đại hơn)
+ssh-keygen -t ed25519 -C "your_email@example.com"

@@ -1,0 +1,7 @@
+1. Setting and Configuring Git 
+
+    git config --global user.name "Tên của bạn"
+    git config --global user.email "email@example.com"
+
+
+
