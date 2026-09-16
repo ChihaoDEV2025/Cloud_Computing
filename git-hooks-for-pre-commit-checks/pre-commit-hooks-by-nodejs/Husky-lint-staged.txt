@@ -1,0 +1,49 @@
+# Install as dev dependencies
+npm install --save-dev husky lint-staged
+
+# Initialize husky (creates .husky/ and a prepare script)
+npx husky init
+
+
+
+
+#configuration
+
+{
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,css}": ["prettier --write"]
+  },
+  "devDependencies": {
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0"
+  }
+}
+
+
+3.access file .husky/pre-commit
+
+
+npx lint-staged
+
+
+
+4. flow
+
+git commit
+   |
+   v
+.husky/pre-commit  ->  npx lint-staged
+   |
+   v
+lint-staged tìm file đã staged khớp glob
+   |
+   +--> chạy eslint --fix  (sửa được thì tự sửa)
+   +--> chạy prettier --write (định dạng lại)
+   |
+   v
+file đã sửa được git add lại tự động -> commit
+

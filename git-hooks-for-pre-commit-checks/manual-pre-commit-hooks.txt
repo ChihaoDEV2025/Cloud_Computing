@@ -1,0 +1,57 @@
+1.Access .git/hooks/pre-commit
+
+        nano .git/hooks/pre-commit
+
+
+2. write 
+#!/usr/bin/env node
+// .git/hooks/pre-commit
+// A Node-based pre-commit hook: check only staged JS files.
+
+const { execSync } = require('child_process');
+
+// 1. Collect staged files (Added/Copied/Modified), JS/TS only
+function getStagedFiles() {
+  const out = execSync('git diff --cached --name-only --diff-filter=ACM', {
+    encoding: 'utf8',
+  });
+  return out
+    .split('\n')
+    .map((f) => f.trim())
+    .filter((f) => /\.(js|jsx|ts|tsx)$/.test(f));
+}
+
+function main() {
+  const files = getStagedFiles();
+  if (files.length === 0) {
+    // Nothing relevant staged, let the commit through
+    process.exit(0);
+  }
+
+  console.log(`🔍 Đang kiểm tra ${files.length} file...`);
+
+  try {
+    // Run ESLint only on the staged files (fast, focused)
+    execSync(`npx eslint ${files.join(' ')}`, { stdio: 'inherit' });
+  } catch (err) {
+    console.error('\n❌ ESLint báo lỗi. Commit bị chặn.');
+    // Non-zero exit tells Git to abort the commit
+    process.exit(1);
+  }
+
+  console.log('✅ Tất cả checks đã pass. Cho commit đi tiếp.');
+  process.exit(0);
+}
+
+main();
+
+
+3. save
+
+Ctrl + O
+Enter
+Ctrl + X
+
+4. give it execute permission:
+
+        chmod +x .git/hooks/pre-commit
