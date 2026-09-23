@@ -1,0 +1,22 @@
+Script hay tới đâu mà phải chạy tay thì vẫn sẽ bị quên. Bước cuối là để cron - bộ hẹn giờ có sẵn trên mọi Linux - tự chạy nó. Cron giống như chiếc đồng hồ báo thức không bao giờ ngủ quên.
+
+Mở crontab bằng crontab -e rồi thêm dòng:
+
+bash
+Copy
+# Run the backup script every day at 2:00 AM.
+# Redirect stdout and stderr to a log file for later inspection.
+0 2 * * *  /usr/bin/env bash /opt/scripts/backup.sh >> /var/log/myapp-backup.log 2>&1
+Cú pháp 5 trường của cron, đọc từ trái sang phải:
+
+Copy
+┌───────────── minute (0 - 59)
+│ ┌───────────── hour (0 - 23)
+│ │ ┌───────────── day of month (1 - 31)
+│ │ │ ┌───────────── month (1 - 12)
+│ │ │ │ ┌───────────── day of week (0 - 6, 0 = Sunday)
+│ │ │ │ │
+0 2 * * *   -> every day at 02:00
+0 2 * * * nghĩa là: phút 0, giờ 2, mọi ngày, mọi tháng, mọi thứ trong tuần = 2 giờ sáng hằng ngày.
+>> file 2>&1 gộp cả output thường và output lỗi vào log để bạn điều tra khi có sự cố.
+🎯 Cron chạy với môi trường rất tối giản (PATH ngắn, thường không nạp ~/.bashrc). Vì thế nên dùng đường dẫn tuyệt đối cho mọi lệnh và cung cấp biến môi trường (như PGPASSWORD) ngay trong crontab hoặc trong script. Rất nhiều “backup không chạy” là do cron không tìm thấy lệnh vì PATH thiếu.

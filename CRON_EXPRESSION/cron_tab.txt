@@ -1,0 +1,16 @@
+# Open the current user's crontab in an editor
+crontab -e
+
+# List the current user's scheduled jobs
+crontab -l
+
+# Remove ALL jobs of the current user (be careful!)
+crontab -r
+
+
+**************
+Giả sử app Express của bạn cần dọn file upload tạm mỗi đêm. Bạn chạy crontab -e rồi thêm dòng:
+
+
+# Clean temp uploads every night at 03:15, append output to a log file
+15 3 * * *  /usr/bin/find /var/app/tmp -type f -mtime +7 -delete >> /var/log/app/cleanup.log 2>&1

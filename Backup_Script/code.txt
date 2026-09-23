@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# backup.sh - Automated backup for a Node/Express app (PostgreSQL + uploads)
+
+# Exit immediately on error, on unset variable, and fail a pipeline
+# if any command in it fails. This is the safety belt of every serious script.
+set -euo pipefail
+
+# --- Configuration (read secrets from environment, never hardcode) ---
+BACKUP_ROOT="/var/backups/myapp"
+DB_NAME="myapp_production"
+DB_USER="backup_user"
+UPLOADS_DIR="/var/www/myapp/uploads"
+RETENTION_DAYS=7
+
+# Timestamp like 2026-09-03_02-00-00, safe for file names
+TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"
+TARGET_DIR="${BACKUP_ROOT}/${TIMESTAMP}"
+
+# Create the target directory (parents included)
+mkdir -p "${TARGET_DIR}"
+
+echo "[$(date)] Starting backup into ${TARGET_DIR}"
+
+# --- 1. Dump the PostgreSQL database and compress on the fly ---
+# PGPASSWORD is expected in the environment (set by cron or a secret file).
+# The custom format (-Fc) is compressed and restorable with pg_restore.
+pg_dump -U "${DB_USER}" -Fc "${DB_NAME}" > "${TARGET_DIR}/db.dump"
+
+# --- 2. Archive the uploads directory ---
+# -c create, -z gzip, -f file. Using -C changes into the parent dir so the
+# archive stores relative paths, which makes restore predictable.
+tar -czf "${TARGET_DIR}/uploads.tar.gz" -C "$(dirname "${UPLOADS_DIR}")" "$(basename "${UPLOADS_DIR}")"
+
+# --- 3. Verify the dump is not empty (a classic silent failure) ---
+if [[ ! -s "${TARGET_DIR}/db.dump" ]]; then
+  echo "[ERROR] Database dump is empty. Aborting." >&2
+  exit 1
+fi
+
+echo "[$(date)] Backup files created:"
+du -h "${TARGET_DIR}"/*
+
+# --- 4. Retention: delete backup folders older than RETENTION_DAYS ---
+# -mtime +N means "modified more than N days ago".
+find "${BACKUP_ROOT}" -maxdepth 1 -type d -mtime +"${RETENTION_DAYS}" -exec rm -rf {} +
+
+echo "[$(date)] Backup completed successfully."

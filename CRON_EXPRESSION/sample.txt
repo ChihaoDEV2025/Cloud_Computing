@@ -1,0 +1,11 @@
+# Every 5 minutes: health check a Node.js service
+*/5 * * * *   node /opt/app/scripts/health-check.js
+
+# Every day at 02:00: back up the database
+0 2 * * *     /opt/app/scripts/backup-db.sh
+
+# Every Monday at 09:00: send the weekly report
+0 9 * * 1     node /opt/app/scripts/weekly-report.js
+
+# On the 1st of every month at midnight: rotate old logs
+0 0 1 * *     /opt/app/scripts/rotate-logs.sh
